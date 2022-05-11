@@ -1,0 +1,74 @@
+﻿@model IList<CanalDeAtendimento>
+@{
+    ViewData["Title"] = "Home Page";
+    
+}
+
+ 
+
+<form action="/Home/SalvarCanal" method="post">
+
+    <table>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+        <tr>
+            <td>Product Name:</td>
+            <td><input type="text" asp-for=@Model[i].Nome /></td>
+            <td><input type="text" asp-for=@Model[i].Telefone /></td>
+        </tr>
+        }
+    </table>
+
+    <div>
+        <input type="submit" value="Post">
+    </div>
+</form>
+
+
+
+
+<select>
+</select>
+
+<table class="table"> 
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Telefones</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+
+</table>
+
+
+@section scripts{
+<script>
+    var resultadoJason = JSON.parse('@Html.Raw(Json.Serialize(Model))');
+    var select = $('select');
+    var tabela = $('tbody');
+    $(function () {
+        
+        resultadoJason.forEach(function (value) {
+            select.append('<option value='+value.id+'>' + value.nome + ' - '+value.telefone+'</option>');
+        });
+
+        select.change(function(){                    
+            $('tbody tr').remove();
+            let id_selecionado = $("select option:selected").val();          
+            
+            let lista_telefones = [];            
+            resultadoJason.filter(x => x.id == id_selecionado).forEach(function(value){
+                lista_telefones.push(value.telefone)
+            });
+            let nome_canal = resultadoJason.find(x=>x.id == id_selecionado).nome;
+            tabela.append('<tr><td>'+nome_canal+'</td><td>'+lista_telefones+'</td></tr>');           
+        });
+
+    
+    });
+
+</script>
+
+}
